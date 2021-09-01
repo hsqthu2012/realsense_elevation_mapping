@@ -8,6 +8,8 @@ This package is based on [ZJU-Robotics-Lab/GEM](https://github.com/ZJU-Robotics-
 
 This software is built on the Robotic Operating System ([ROS]), which needs to be [installed](http://wiki.ros.org) first. Additionally, the Globally consistent dense Elevation Mapping depends on following software:
 
+- [Navigation](http://wiki.ros.org/navigation?distro=melodic) (navigation library for costmap_2d required by Grid Map)
+- [OpenCV](https://opencv.org/) (required by Grid Map)
 - [Grid Map](https://github.com/anybotics/grid_map) (grid map library for mobile robots)
 - [Point Cloud Library (PCL)](http://pointclouds.org/) (point cloud processing),
 - [Eigen](http://eigen.tuxfamily.org) (linear algebra library, tested on 3.2.9 & 3.3.4; failed on 3.3.9).

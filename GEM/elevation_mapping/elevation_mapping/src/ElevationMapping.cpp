@@ -371,13 +371,28 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
     }
   }
 
+  // Project image to point cloud may be unnecessary for Realsense since it can align image and point cloud? (Suqin He)
+  ROS_INFO("Projection time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
+
   lastPointCloudUpdateTime_.fromNSec(1000 * pointCloud->header.stamp);
 
   ROS_INFO("ElevationMap received a point cloud (%i points) for elevation mapping.", static_cast<int>(pointCloud->size()));
   sensorProcessor_->updateTransformations(timeStamp);
+
+  ROS_INFO("updateTransformations time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
   // ROS_INFO("check point 1"); // added by Suqin He for debugging
+
   updatepointsMapLocation(timeStamp);
+
+  ROS_INFO("updatepointsMapLocation time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
+
   updateMapLocation();
+
+  ROS_INFO("updateMapLocation time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
   // ROS_INFO("check point 2"); // added by Suqin He for debugging
 
   // thread for process
@@ -399,19 +414,27 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
   float intensity[length_ * length_];
 
   // calculate point cloud attributes
-  Map_feature(length_, elevation, var, point_colorR, point_colorG, point_colorB, rough, slope, traver, intensity);
+  Map_feature(length_, elevation, var, point_colorR, point_colorG, point_colorB, rough, slope, traver, intensity); // CUDA function
+
+  ROS_INFO("Map_feature time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
   // ROS_INFO("length of elevation = %i", sizeof(elevation)/sizeof(elevation[0])); // added by Suqin He for debugging
+
   // get orthomosaic image
   orthoImage = map_.show(timeStamp, robot_name, trackPointTransformed_x, trackPointTransformed_y, length_, elevation, var, point_colorR, point_colorG, point_colorB, rough, slope, traver, intensity);
 
   // update local map and visual the local point cloud
   updateLocalMap(rawPointCloud);
+
+  ROS_INFO("updateLocalMap time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
   // visualPointMap(); // uncomment by Suqin He
   // visualOctomap();
   // ROS_INFO("check point 4"); // added by Suqin He for debugging
   
   // raytracing for obstacle removal
-  Raytracing(length_);
+  Raytracing(length_); // CUDA function
+  ROS_INFO("Raytracing time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
   prevMap_ = map_.visualMap_;
   // ROS_INFO("check point 5"); // added by Suqin He for debugging
 }
@@ -999,7 +1022,7 @@ bool ElevationMapping::updateMapLocation()
     opt_position[0] = trackPointTransformed_x;
     opt_position[1] = trackPointTransformed_y;
 
-    Map_optmove(opt_position, height_update, resolution_,  length_, opt_alignedPosition);
+    Map_optmove(opt_position, height_update, resolution_,  length_, opt_alignedPosition); // CUDA function
 
     M_position.x() = opt_alignedPosition[0];
     M_position.y() = opt_alignedPosition[1];
@@ -1011,7 +1034,7 @@ bool ElevationMapping::updateMapLocation()
     int d_startindex[2];
 
     // move the grid map to this location
-    Move(current_p , resolution_,  length_, current_position, d_startindex, position_shift);
+    Move(current_p , resolution_,  length_, current_position, d_startindex, position_shift); // CUDA function
 
     M_startindex.x() = d_startindex[0];
     M_startindex.y() = d_startindex[1];
