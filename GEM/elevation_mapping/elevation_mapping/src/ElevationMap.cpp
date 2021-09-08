@@ -86,7 +86,7 @@ sensor_msgs::ImagePtr ElevationMap::show(ros::Time timeStamp, string robot_name,
   Index start_index = visualMap_.getStartIndex();
 
   // ros::Time begin_time = ros::Time::now (); // added by Suqin He
-
+  
   for (GridMapIterator iterator(visualMap_); !iterator.isPastEnd(); ++iterator) {
     index_x = (*iterator).transpose().x();
     index_y = (*iterator).transpose().y();
@@ -95,29 +95,29 @@ sensor_msgs::ImagePtr ElevationMap::show(ros::Time timeStamp, string robot_name,
     if(elevation[index] != -10)
     {
       visualMap_.at("elevation", *iterator) = elevation[index];
-      visualMap_.at("variance", *iterator) = var[index];
-      visualMap_.at("rough", *iterator) = rough[index];
-      visualMap_.at("slope", *iterator) = slope[index];
-      visualMap_.at("traver", *iterator) = traver[index];
-      visualMap_.at("color_r", *iterator) = point_colorR[index];
-      visualMap_.at("color_g", *iterator) = point_colorG[index];
-      visualMap_.at("color_b", *iterator) = point_colorB[index];
-      visualMap_.at("intensity", *iterator) = intensity[index];
+      // visualMap_.at("variance", *iterator) = var[index];
+      // visualMap_.at("rough", *iterator) = rough[index];
+      // visualMap_.at("slope", *iterator) = slope[index];
+      // visualMap_.at("traver", *iterator) = traver[index];
+      // visualMap_.at("color_r", *iterator) = point_colorR[index];
+      // visualMap_.at("color_g", *iterator) = point_colorG[index];
+      // visualMap_.at("color_b", *iterator) = point_colorB[index];
+      // visualMap_.at("intensity", *iterator) = intensity[index];
 
-      Position point;
-      visualMap_.getPosition(*iterator, point);
+      // Position point;
+      // visualMap_.getPosition(*iterator, point);
 
-      show_point.x = point.x();
-      show_point.y = point.y();
-      show_point.z = visualMap_.at("elevation", *iterator);
-      show_point.r = visualMap_.at("color_r", *iterator);
-      show_point.g = visualMap_.at("color_g", *iterator);
-      show_point.b = visualMap_.at("color_b", *iterator);
+      // show_point.x = point.x();
+      // show_point.y = point.y();
+      // show_point.z = visualMap_.at("elevation", *iterator);
+      // show_point.r = visualMap_.at("color_r", *iterator);
+      // show_point.g = visualMap_.at("color_g", *iterator);
+      // show_point.b = visualMap_.at("color_b", *iterator);
 
-      show_pointCloud.push_back(show_point);
-      image.at<cv::Vec3b>((index_x + length - start_index[0]) % length, (index_y + length - start_index[1]) % length)[0] = visualMap_.at("color_b", *iterator);
-      image.at<cv::Vec3b>((index_x + length - start_index[0]) % length, (index_y + length - start_index[1]) % length)[1] = visualMap_.at("color_g", *iterator);
-      image.at<cv::Vec3b>((index_x + length - start_index[0]) % length, (index_y + length - start_index[1]) % length)[2] = visualMap_.at("color_r", *iterator);
+      // show_pointCloud.push_back(show_point);
+      // image.at<cv::Vec3b>((index_x + length - start_index[0]) % length, (index_y + length - start_index[1]) % length)[0] = visualMap_.at("color_b", *iterator);
+      // image.at<cv::Vec3b>((index_x + length - start_index[0]) % length, (index_y + length - start_index[1]) % length)[1] = visualMap_.at("color_g", *iterator);
+      // image.at<cv::Vec3b>((index_x + length - start_index[0]) % length, (index_y + length - start_index[1]) % length)[2] = visualMap_.at("color_r", *iterator);
     }
   }
   // ROS_INFO("Loop time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
@@ -141,6 +141,63 @@ sensor_msgs::ImagePtr ElevationMap::show(ros::Time timeStamp, string robot_name,
   visualMapPublisher_.publish(message);
   return msg;
 }
+
+// rewrite this function for better efficiency. Suqin He
+// sensor_msgs::ImagePtr ElevationMap::show(ros::Time timeStamp, string robot_name, float trackPointTransformed_x, float trackPointTransformed_y, int length, float *elevation, float *var, int *point_colorR, int *point_colorG, int *point_colorB, float *rough, float *slope, float *traver, float* intensity)
+// {
+//   cv::Mat image(length, length, CV_8UC3, cv::Scalar(0,0,0));
+
+//   visualMap_.clearAll();
+
+//   // ros::Time begin_time = ros::Time::now (); // added by Suqin He
+
+//   Eigen::Map< Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > data_matrix(elevation, length, length);
+//   auto nan_index = (data_matrix.array() == -10);
+//   data_matrix = nan_index.select(NAN, data_matrix);
+//   visualMap_.add("elevation", data_matrix);
+
+//   data_matrix = Eigen::Map< Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(var, length, length);
+//   data_matrix = nan_index.select(NAN, data_matrix);
+//   visualMap_.add("variance", data_matrix);
+
+//   data_matrix = Eigen::Map< Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(rough, length, length);
+//   data_matrix = nan_index.select(NAN, data_matrix);
+//   visualMap_.add("rough", data_matrix);
+
+//   data_matrix = Eigen::Map< Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(slope, length, length);
+//   data_matrix = nan_index.select(NAN, data_matrix);
+//   visualMap_.add("slope", data_matrix);
+
+//   data_matrix = Eigen::Map< Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(traver, length, length);
+//   data_matrix = nan_index.select(NAN, data_matrix);
+//   visualMap_.add("traver", data_matrix);
+
+//   // data_matrix = Eigen::Map< Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(point_colorR, length, length);
+//   // data_matrix = nan_index.select(NAN, data_matrix);
+//   // visualMap_.add("color_r", data_matrix);
+
+//   // data_matrix = Eigen::Map< Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(point_colorG, length, length);
+//   // data_matrix = nan_index.select(NAN, data_matrix);
+//   // visualMap_.add("color_g", data_matrix);
+
+//   // data_matrix = Eigen::Map< Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(point_colorB, length, length);
+//   // data_matrix = nan_index.select(NAN, data_matrix);
+//   // visualMap_.add("color_b", data_matrix);
+
+//   data_matrix = Eigen::Map< Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(intensity, length, length);
+//   data_matrix = nan_index.select(NAN, data_matrix);
+//   visualMap_.add("intensity", data_matrix);
+
+//   // ROS_INFO("Loop time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+
+//   // Publish orthomoasic image
+//   sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
+
+//   grid_map_msgs::GridMap message;
+//   GridMapRosConverter::toMessage(visualMap_, message);
+//   visualMapPublisher_.publish(message);
+//   return msg;
+// }
 
 bool ElevationMap::clear()
 {
