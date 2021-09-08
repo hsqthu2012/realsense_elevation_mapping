@@ -1,10 +1,10 @@
 robot_id: "0"
 robot_name: "robot0"
-map_frame_id: "robot0/map"
-sensor_frame_id: "camera_color_optical_frame"
-robot_base_frame_id: "robot0/Local"
-track_point_frame_id: "camera_link"
-robot_pose_with_covariance_topic: "/camera_link_pose"
+map_frame_id: "t265_odom_frame"
+sensor_frame_id: "d455_color_optical_frame"
+robot_base_frame_id: "t265_pose_frame"
+track_point_frame_id: "d455_link"
+robot_pose_with_covariance_topic: "/d455_link_pose"
 robot_pose_cache_size: 200
 robot_local_map_size: 100
 track_point_x: 0.0

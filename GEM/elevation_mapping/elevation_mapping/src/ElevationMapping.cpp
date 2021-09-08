@@ -336,43 +336,47 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
   ros::Time timeStamp;
   timeStamp.fromNSec(1000 * pointCloud->header.stamp);
 
-  // Project image to point cloud
-  for(int i = 0; i < pointCloud->points.size(); i++)
-  {
-    P_lidar << pointCloud->points[i].x, 
-              pointCloud->points[i].y,
-              pointCloud->points[i].z,
-              1;
-    P_img = P_lidar2img * P_lidar;
+  ROS_INFO(" ");
+  ROS_INFO("Parameter reading time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
+
+  // Project image to point cloud (commented by Suqin He)
+  // for(int i = 0; i < pointCloud->points.size(); i++)
+  // {
+  //   P_lidar << pointCloud->points[i].x, 
+  //             pointCloud->points[i].y,
+  //             pointCloud->points[i].z,
+  //             1;
+  //   P_img = P_lidar2img * P_lidar;
     
-    P_x = P_img.x() / P_img.z();  // NCLT need to flip x, y
-    P_y = P_img.y() / P_img.z();
+  //   P_x = P_img.x() / P_img.z();  // NCLT need to flip x, y
+  //   P_y = P_img.y() / P_img.z();
 
-    cv::Point midPoint;
+  //   cv::Point midPoint;
 
-    midPoint.x = P_x;
-    midPoint.y = P_y;
+  //   midPoint.x = P_x;
+  //   midPoint.y = P_y;
 
-    // Project image to lidar point cloud
-    if(midPoint.x > 0 && midPoint.x < img.size().width && midPoint.y > 0 && midPoint.y < img.size().height){ // NCLT need to flip height, width  
-      int b = img.at<cv::Vec3b>(midPoint.y,midPoint.x)[0];
-      int g = img.at<cv::Vec3b>(midPoint.y,midPoint.x)[1];
-      int r = img.at<cv::Vec3b>(midPoint.y,midPoint.x)[2];
-      cv::circle(img, midPoint, 1, cv::Scalar(b, g, r));
-      pointCloud->points[i].b = b;
-      pointCloud->points[i].g = g;
-      pointCloud->points[i].r = r;
-    }
-    else{
-      pointCloud->points[i].b = 0;
-      pointCloud->points[i].g = 0;
-      pointCloud->points[i].r = 0;
-      pointCloud->points[i].intensity = 0;
-    }
-  }
+  //   // Project image to lidar point cloud
+  //   if(midPoint.x > 0 && midPoint.x < img.size().width && midPoint.y > 0 && midPoint.y < img.size().height){ // NCLT need to flip height, width  
+  //     int b = img.at<cv::Vec3b>(midPoint.y,midPoint.x)[0];
+  //     int g = img.at<cv::Vec3b>(midPoint.y,midPoint.x)[1];
+  //     int r = img.at<cv::Vec3b>(midPoint.y,midPoint.x)[2];
+  //     cv::circle(img, midPoint, 1, cv::Scalar(b, g, r));
+  //     pointCloud->points[i].b = b;
+  //     pointCloud->points[i].g = g;
+  //     pointCloud->points[i].r = r;
+  //   }
+  //   else{
+  //     pointCloud->points[i].b = 0;
+  //     pointCloud->points[i].g = 0;
+  //     pointCloud->points[i].r = 0;
+  //     pointCloud->points[i].intensity = 0;
+  //   }
+  // }
 
   // Project image to point cloud may be unnecessary for Realsense since it can align image and point cloud? (Suqin He)
-  ROS_INFO("Projection time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  ROS_INFO("Projection time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   begin_time = ros::Time::now(); // added by Suqin He
 
   lastPointCloudUpdateTime_.fromNSec(1000 * pointCloud->header.stamp);
@@ -380,18 +384,18 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
   ROS_INFO("ElevationMap received a point cloud (%i points) for elevation mapping.", static_cast<int>(pointCloud->size()));
   sensorProcessor_->updateTransformations(timeStamp);
 
-  ROS_INFO("updateTransformations time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  ROS_INFO("updateTransformations time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   begin_time = ros::Time::now(); // added by Suqin He
   // ROS_INFO("check point 1"); // added by Suqin He for debugging
 
   updatepointsMapLocation(timeStamp);
 
-  ROS_INFO("updatepointsMapLocation time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  ROS_INFO("updatepointsMapLocation time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   begin_time = ros::Time::now(); // added by Suqin He
 
   updateMapLocation();
 
-  ROS_INFO("updateMapLocation time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  ROS_INFO("updateMapLocation time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   begin_time = ros::Time::now(); // added by Suqin He
   // ROS_INFO("check point 2"); // added by Suqin He for debugging
 
@@ -416,17 +420,20 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
   // calculate point cloud attributes
   Map_feature(length_, elevation, var, point_colorR, point_colorG, point_colorB, rough, slope, traver, intensity); // CUDA function
 
-  ROS_INFO("Map_feature time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  ROS_INFO("Map_feature time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   begin_time = ros::Time::now(); // added by Suqin He
   // ROS_INFO("length of elevation = %i", sizeof(elevation)/sizeof(elevation[0])); // added by Suqin He for debugging
 
   // get orthomosaic image
   orthoImage = map_.show(timeStamp, robot_name, trackPointTransformed_x, trackPointTransformed_y, length_, elevation, var, point_colorR, point_colorG, point_colorB, rough, slope, traver, intensity);
 
+  ROS_INFO("orthoImage time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
+
   // update local map and visual the local point cloud
   updateLocalMap(rawPointCloud);
 
-  ROS_INFO("updateLocalMap time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  ROS_INFO("updateLocalMap time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   begin_time = ros::Time::now(); // added by Suqin He
   // visualPointMap(); // uncomment by Suqin He
   // visualOctomap();
@@ -434,7 +441,7 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
   
   // raytracing for obstacle removal
   Raytracing(length_); // CUDA function
-  ROS_INFO("Raytracing time: %f sec.", (ros::Time::now() - begin_time).toSec()); // added by Suqin He
+  ROS_INFO("Raytracing time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   prevMap_ = map_.visualMap_;
   // ROS_INFO("check point 5"); // added by Suqin He for debugging
 }
@@ -976,7 +983,8 @@ bool ElevationMapping::updatepointsMapLocation(const ros::Time& timeStamp)
 
   // get tf
   try{
-    transformListener_.lookupTransform("/" + robot_name + "/map", trackPointFrameId_, timeStamp, trackPoseTransformed_);
+    // transformListener_.lookupTransform("/" + robot_name + "/map", trackPointFrameId_, timeStamp, trackPoseTransformed_);
+    transformListener_.lookupTransform(map_.getFrameId(), trackPointFrameId_, timeStamp, trackPoseTransformed_); // modified by Suqin He
   }catch (tf::TransformException &ex) {
     ROS_ERROR("%s",ex.what());
     ros::Duration(1.0).sleep();

@@ -85,6 +85,8 @@ sensor_msgs::ImagePtr ElevationMap::show(ros::Time timeStamp, string robot_name,
   int index, index_x, index_y;
   Index start_index = visualMap_.getStartIndex();
 
+  // ros::Time begin_time = ros::Time::now (); // added by Suqin He
+
   for (GridMapIterator iterator(visualMap_); !iterator.isPastEnd(); ++iterator) {
     index_x = (*iterator).transpose().x();
     index_y = (*iterator).transpose().y();
@@ -118,6 +120,7 @@ sensor_msgs::ImagePtr ElevationMap::show(ros::Time timeStamp, string robot_name,
       image.at<cv::Vec3b>((index_x + length - start_index[0]) % length, (index_y + length - start_index[1]) % length)[2] = visualMap_.at("color_r", *iterator);
     }
   }
+  // ROS_INFO("Loop time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
 
   // Publish orthomoasic image
   sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();

@@ -6,7 +6,7 @@ This package is based on [ZJU-Robotics-Lab/GEM](https://github.com/ZJU-Robotics-
 
 ## Dependencies
 
-This software is built on the Robotic Operating System ([ROS]), which needs to be [installed](http://wiki.ros.org) first. Additionally, the Globally consistent dense Elevation Mapping depends on following software:
+This software is built on the ROS, which needs to be [installed](http://wiki.ros.org) first. Additionally, the Globally consistent dense Elevation Mapping depends on following software:
 
 - [Navigation](http://wiki.ros.org/navigation?distro=melodic) (navigation library for costmap_2d required by Grid Map)
 - [OpenCV](https://opencv.org/) (required by Grid Map)
@@ -30,9 +30,38 @@ catkin build
 A script is used to launch different nodes in a specific order to avoid crashing.
 Execute the following command to start a simple demo.
 
+### Visual Odometry
+
+The odometry infomation is obtained using D455 visual odometry. The elevation map publishing rate is low due to the limit from visual odometry.
+
 ```bash
 cd catkin_workspace/src/GEM/elevation_mapping/elevation_mapping_demos/launch
 ./timed_launch.sh
 ```
 
+### Odometry using T265 (Recomended)
+
+The odometry infomation is obtained using T265 sensor. The elevation map publishing rate is much higher.
+
+```bash
+cd catkin_workspace/src/GEM/elevation_mapping/elevation_mapping_demos/launch
+./timed_launch_d455_t265.sh
+```
+
 ## Important Parameters
+
+In `GEM/elevation_mapping/elevation_mapping_demos/config/robots/realsense_robot.yaml`, the `camera_params_yaml` parameter should be modified to find the `yq_intrinsic.yaml`.
+
+### Change Local Map Size
+
+In `GEM/elevation_mapping/elevation_mapping_demos/config/elevation_maps/realsense_demo_map.yaml`, change the following parameters
+
+- `length_in_x`
+- `length_in_y`
+- `resolution`
+
+Also, in `realsense_start.launch` or `realsense_d455_t265_start.launch`, change the following parameters to modify point cloud size
+
+- `clip_distance`
+- `filter_limit_max`
+- `leaf_size`

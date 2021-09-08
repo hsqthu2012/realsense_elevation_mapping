@@ -1,10 +1,10 @@
-# length_in_x: 1
-# length_in_y: 1
+length_in_x: 4
+length_in_y: 4
 # position_x: 0.0
 # position_y: 0.0
 # track_point_x: 0.0
 # track_point_y: 0.0
-resolution: 0.02
+resolution: 0.03
 # traversThre: 0.0
 # min_variance: 0.0001
 # max_variance: 10000.0

@@ -57,7 +57,7 @@ def main_program():
         pose_name, geometry_msgs.msg.PoseWithCovarianceStamped, queue_size=10)
 
     # Set callback and start spinning
-    rospy.Timer(rospy.Duration(0.02), callback) # 50 Hz
+    rospy.Timer(rospy.Duration(0.005), callback) # 200 Hz
     rospy.spin()
 
 

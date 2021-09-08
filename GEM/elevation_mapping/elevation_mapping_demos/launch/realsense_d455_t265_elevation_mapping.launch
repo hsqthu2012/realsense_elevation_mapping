@@ -1,0 +1,13 @@
+<launch>
+    <!-- Elevation mapping node -->
+    <arg name="robot_id" default="0"/>
+    <arg name="camera_topic"  default="/d455/color/image_raw"/>
+    <arg name="depth_topic"  default="/robot0/pointcloud"/>
+    <node pkg="elevation_mapping" type="elevation_mapping" name="elevation_mapping_$(arg robot_id)" output="screen">
+        <rosparam command="load" file="$(find elevation_mapping_demos)/config/robots/realsense_d455_t265_robot.yaml" />
+        <rosparam command="load" file="$(find elevation_mapping_demos)/config/elevation_maps/realsense_demo_map.yaml" />
+        <rosparam command="load" file="$(find elevation_mapping)/config/sensor_processors/realsense_d435.yaml" />
+        <remap from="/voxel_grid/output" to="$(arg depth_topic)"/>
+        <remap from="/stereo_grey/left/image_raw" to="$(arg camera_topic)"/>
+    </node>
+</launch>

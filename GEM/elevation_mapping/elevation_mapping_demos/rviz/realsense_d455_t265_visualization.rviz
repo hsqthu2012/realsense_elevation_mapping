@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /TF1/Frames1
+        - /PointCloud22/Status1
       Splitter Ratio: 0.663888991
     Tree Height: 557
   - Class: rviz/Selection
@@ -55,39 +56,42 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        camera_aligned_depth_to_color_frame:
+        d455_aligned_depth_to_color_frame:
           Value: false
-        camera_color_frame:
+        d455_color_frame:
           Value: false
-        camera_color_optical_frame:
+        d455_color_optical_frame:
           Value: false
-        camera_depth_frame:
+        d455_depth_frame:
           Value: false
-        camera_depth_optical_frame:
+        d455_depth_optical_frame:
           Value: false
-        camera_link:
+        d455_link:
           Value: true
-        robot0/Local:
+        t265_link:
+          Value: false
+        t265_odom_frame:
           Value: true
-        robot0/map:
-          Value: true
+        t265_pose_frame:
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        robot0/map:
-          robot0/Local:
-            camera_link:
-              camera_aligned_depth_to_color_frame:
-                camera_color_optical_frame:
+        t265_odom_frame:
+          t265_pose_frame:
+            t265_link:
+              d455_link:
+                d455_aligned_depth_to_color_frame:
+                  d455_color_optical_frame:
+                    {}
+                d455_color_frame:
                   {}
-              camera_color_frame:
-                {}
-              camera_depth_frame:
-                camera_depth_optical_frame:
-                  {}
+                d455_depth_frame:
+                  d455_depth_optical_frame:
+                    {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -220,7 +224,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /color/image_raw
+      Image Topic: /d455/color/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -297,7 +301,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: robot0/map
+    Fixed Frame: t265_odom_frame
     Frame Rate: 30
   Name: root
   Tools:
@@ -356,5 +360,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1564
-  X: 727
-  Y: 128
+  X: 313
+  Y: 180

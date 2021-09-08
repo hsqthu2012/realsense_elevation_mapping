@@ -20,9 +20,9 @@
         <arg name="depth_height"     value="$(arg height)"/>
         <arg name="color_width"      value="$(arg width)"/>
         <arg name="color_height"     value="$(arg height)"/>
-        <!-- <arg name="clip_distance"    value="1.5"/> -->
-        <arg name="depth_fps"        value="30"/>
-        <arg name="color_fps"        value="30"/>
+        <arg name="clip_distance"    value="2.0"/>
+        <arg name="depth_fps"        value="60"/>
+        <arg name="color_fps"        value="60"/>
         <arg name="external_manager" value="true"/>
         <arg name="manager"          value="realsense2_camera_manager"/>
         <arg name="required"         value="true"/>
@@ -37,8 +37,8 @@
         <rosparam>
             filter_field_name: z
             filter_limit_min: 0.0
-            filter_limit_max: 1.5
-            leaf_size: 0.02
+            filter_limit_max: 2.0
+            leaf_size: 0.03
         </rosparam>
     </node>
     

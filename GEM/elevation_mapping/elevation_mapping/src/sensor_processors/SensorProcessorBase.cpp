@@ -97,7 +97,9 @@ bool SensorProcessorBase::process(
 bool SensorProcessorBase::updateTransformations(const ros::Time& timeStamp)
 {
   try {
+    ros::Time begin_time = ros::Time::now(); // added by Suqin He
     transformListener_.waitForTransform(sensorFrameId_, mapFrameId_, timeStamp, ros::Duration(1.0));
+    ROS_INFO("waitForTransform time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
     
     tf::StampedTransform transformTf;
     // transformListener_.lookupTransform(mapFrameId_, sensorFrameId_, ros::Time(0), transformTf);
