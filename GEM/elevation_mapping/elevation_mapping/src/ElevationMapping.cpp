@@ -637,6 +637,9 @@ void ElevationMapping::updateLocalMap(const sensor_msgs::PointCloud2ConstPtr& ra
   //   ROS_WARN("NEW KEYFRAME ****************");
   // }
 
+  // if(initFlag == 1)
+  //   prevMap_ = map_.visualMap_;
+
   // main if for generate local map
   if(newLocalMapFlag == 1 && (JumpFlag == 1 || optFlag == 0)){// && JumpOdomFlag == 0){ // At the local_map's boundary
     if(!localMap_.empty() && initFlag == 0){ // Not the init state
