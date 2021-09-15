@@ -6,5 +6,9 @@
     "python.autoComplete.extraPaths": [
         "/home/runner/elevation_mapping/devel/lib/python2.7/dist-packages",
         "/opt/ros/melodic/lib/python2.7/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/runner/elevation_mapping/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages"
     ]
 }
