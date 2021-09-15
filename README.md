@@ -65,3 +65,7 @@ Also, in `realsense_start.launch` or `realsense_d455_t265_start.launch`, change 
 - `clip_distance`
 - `filter_limit_max`
 - `leaf_size`
+
+## Applicantion
+
+Now this program has been tested on PC and Nvidia Jetson TX2.
