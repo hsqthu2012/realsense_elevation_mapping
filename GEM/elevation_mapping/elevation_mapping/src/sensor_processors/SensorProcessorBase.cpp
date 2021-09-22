@@ -31,6 +31,9 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+// OpenMP
+#include <omp.h> // added by Suqin He
+
 int Process_points(int *mapindex, float *point_x, float *point_y, float *point_z, float *point_var, float *point_x_ts, float *point_y_ts, float *point_z_ts, Eigen::Matrix4f Transform, int point_num, double relativeLowerThreshold, double relativeUpperThreshold, float min_r, float beam_a, float beam_c, Eigen::RowVector3f sensorJacobian, Eigen::Matrix3f rotationVariance, Eigen::Matrix3f C_SB_transpose, Eigen::RowVector3f P_mul_C_BM_transpose, Eigen::Matrix3f B_r_BS_skew);
 namespace elevation_mapping {
 
@@ -161,16 +164,20 @@ bool SensorProcessorBase::GPUPointCloudprocess(
   float point_x_ts[point_num];
 	float point_y_ts[point_num];
 	
+  #pragma omp parallel for
 	for (size_t i = 0; i < point_num; ++i) {
 		auto& point = pointCloudSensorframe->points[i];
     point_x[i] = point.x;
 		point_y[i] = point.y;
 		point_z[i] = point.z;
-    point_colorR[i] = point.r;
-    point_colorG[i] = point.g;
-    point_colorB[i] = point.b;
-    point_intensity[i] = point.intensity;
+    // point_colorR[i] = point.r; // commented by Suqin He
+    // point_colorG[i] = point.g;
+    // point_colorB[i] = point.b;
+    // point_intensity[i] = point.intensity;
 	}
+
+  ROS_INFO("loop in sensor->process time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+  begin_time = ros::Time::now ();
 
   Eigen::Affine3d transform;
  
@@ -212,6 +219,9 @@ bool SensorProcessorBase::GPUPointCloudprocess(
   // ROS_INFO("check3"); // added by Suqin He for debugging
   Process_points(point_index, point_x, point_y, point_z, point_var, point_x_ts, point_y_ts, point_height,  Transform, point_num, relativeLowerThreshold, relativeUpperThreshold, min_r, beam_a, beam_c, sensorJacobian, rotationVariance, C_SB_transpose, P_mul_C_BM_transpose, B_r_BS_skew);
   // ROS_INFO("point_height = %f", point_height[0]); // added by Suqin He for debugging
+
+  ROS_INFO("Process_points in sensor->process time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+
 	return true;
 }
 

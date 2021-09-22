@@ -265,10 +265,15 @@ void ElevationMapping::processpoints(pcl::PointCloud<Anypoint>::ConstPtr pointCl
     this->resetMapUpdateTimer();
   }
 
+  ROS_INFO("Process points time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+  begin_time = ros::Time::now ();
+
   boost::recursive_mutex::scoped_lock lock(MapMutex_);
 
   // GPU functions for fusing multi-frame point cloud
   Fuse(length_, point_num, point_index, point_colorR, point_colorG, point_colorB, point_intensity, point_height, point_var);
+
+  ROS_INFO("Fuse points time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
   
   lock.unlock();
 }
@@ -279,7 +284,7 @@ void ElevationMapping::processpoints(pcl::PointCloud<Anypoint>::ConstPtr pointCl
  */
 void ElevationMapping::processmapcells()
 {
-  ros::Time begin_time = ros::Time::now ();
+  // ros::Time begin_time = ros::Time::now ();
   boost::recursive_mutex::scoped_lock lock(MapMutex_);
 
   if (!this->updatePrediction(this->lastPointCloudUpdateTime_)) {
@@ -287,6 +292,9 @@ void ElevationMapping::processmapcells()
     this->resetMapUpdateTimer();
     return;
   }
+
+  // ROS_INFO("Process mapcells time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+   
   lock.unlock();   
 }
 
@@ -403,7 +411,10 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
   std::thread processPointThread(&ElevationMapping::processpoints, this, pointCloud);
   std::thread processMapCellThread(&ElevationMapping::processmapcells, this);
   processPointThread.join();
-  processMapCellThread.join();  
+  processMapCellThread.join();
+
+  ROS_INFO("Process thread time: %f ms.", (ros::Time::now() - begin_time).toSec()*1000); // added by Suqin He
+  begin_time = ros::Time::now(); // added by Suqin He
 
   // point cloud attributes 
   // ROS_INFO("length_ = %i", length_); // added by Suqin He for debugging

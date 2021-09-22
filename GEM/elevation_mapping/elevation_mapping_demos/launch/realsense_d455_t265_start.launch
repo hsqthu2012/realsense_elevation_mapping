@@ -69,7 +69,7 @@
         <rosparam>
             filter_field_name: z
             filter_limit_min: 0.0
-            filter_limit_max: 2.0
+            filter_limit_max: 1.5
             leaf_size: 0.03
         </rosparam>
     </node>

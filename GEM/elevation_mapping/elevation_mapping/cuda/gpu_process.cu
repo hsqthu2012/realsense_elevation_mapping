@@ -1115,6 +1115,7 @@ int Process_points(int *map_index, float *point_x, float *point_y, float *point_
 	cudaMemcpyToSymbol(C_beam_c, &beam_c, sizeof(float));
     
     int threadsPerBlock = 256;
+    // int threadsPerBlock = 64;
     int point_blocksPerGrid =(point_num + threadsPerBlock - 1) / threadsPerBlock; 
 	G_pointsprocess<<<point_blocksPerGrid, threadsPerBlock>>>(dev_mapindex, dev_x, dev_y, dev_z, dev_result, dev_x_ts, dev_y_ts, dev_z_ts, transform, point_num, sensorJacobian, rotationVariance, C_SB_transpose, P_mul_C_BM_transpose, B_r_BS_skew); 
     
@@ -1179,7 +1180,8 @@ void Fuse(int length, int point_num, int *point_index, int *point_colorR, int *p
     cudaMemcpy(dev_pointintensity, point_intensity, point_num * sizeof(float), cudaMemcpyHostToDevice);
 
     int cell_num = length * length;
-	int threadsPerBlock = 256; 
+	int threadsPerBlock = 256;
+    // int threadsPerBlock = 64;
     int blocksPerGrid =(cell_num + threadsPerBlock - 1) / threadsPerBlock; 
     G_fuse<<<blocksPerGrid, threadsPerBlock>>>(dev_pointindex, dev_pointcolorR, dev_pointcolorG, dev_pointcolorB, dev_pointintensity, dev_pointheight, dev_pointvar, point_num); 
     
@@ -1276,7 +1278,8 @@ void Map_feature(int length, float *elevation, float *var, int *colorR, int *col
     cudaMalloc((void**)&d_intensity, length * length * sizeof(float)); 
 
     int cell_num = length * length;
-	int threadsPerBlock = 256; 
+	int threadsPerBlock = 256;
+    // int threadsPerBlock = 64;
 	int blocksPerGrid =(cell_num + threadsPerBlock - 1) / threadsPerBlock; 
     G_Mapfeature<<<blocksPerGrid, threadsPerBlock>>>(d_colorR, d_colorG, d_colorB, d_elevation, d_var, d_rough, d_slope, d_traver, d_intensity); 
 
