@@ -10,6 +10,7 @@
     <arg name="tf_prefix_camera2"         default="$(arg camera2)"/>
     <arg name="initial_reset"             default="true"/>
     <arg name="enable_fisheye"            default="false"/>
+    <!-- <arg name="enable_color"              default="false"/> -->
     <arg name="color_width"               default="480"/>
     <arg name="color_height"              default="270"/>
     <arg name="depth_width"               default="480"/>
@@ -48,6 +49,7 @@
         <arg name="initial_reset"         value="$(arg initial_reset)"/>
         <arg name="align_depth"           value="true"/>
         <arg name="filters"               value="pointcloud"/>
+        <!-- <arg name="enable_color"          value="$(arg enable_color)"/> -->
         <arg name="color_width"           value="$(arg color_width)"/>
         <arg name="color_height"          value="$(arg color_height)"/>
         <arg name="depth_width"           value="$(arg depth_width)"/>
@@ -69,7 +71,7 @@
         <rosparam>
             filter_field_name: z
             filter_limit_min: 0.0
-            filter_limit_max: 1.5
+            filter_limit_max: 2
             leaf_size: 0.03
         </rosparam>
     </node>

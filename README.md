@@ -9,6 +9,7 @@ This package is based on [ZJU-Robotics-Lab/GEM](https://github.com/ZJU-Robotics-
 This software is built on the ROS, which needs to be [installed](http://wiki.ros.org) first. Additionally, the Globally consistent dense Elevation Mapping depends on following software:
 
 - [Navigation](http://wiki.ros.org/navigation?distro=melodic) (navigation library for costmap_2d required by Grid Map)
+- [Octomap](http://wiki.ros.org/octomap_mapping) (Mapping tools to be used with the OctoMap library.)
 - [OpenCV](https://opencv.org/) (required by Grid Map)
 - [Grid Map](https://github.com/anybotics/grid_map) (grid map library for mobile robots)
 - [Point Cloud Library (PCL)](http://pointclouds.org/) (point cloud processing),
@@ -68,4 +69,4 @@ Also, in `realsense_start.launch` or `realsense_d455_t265_start.launch`, change 
 
 ## Applicantion
 
-Now this program has been tested on PC and Nvidia Jetson TX2.
+Now this program has been tested on PC (~15Hz) and Nvidia Jetson TX2, AGX Xavier (13~14Hz) with 4mx4mx3cm map.

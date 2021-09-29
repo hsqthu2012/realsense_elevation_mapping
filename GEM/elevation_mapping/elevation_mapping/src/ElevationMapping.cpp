@@ -138,7 +138,7 @@ bool ElevationMapping::readParameters()
 
   // ElevationMapping parameters.
   nodeHandle_.param("track_point_frame_id", trackPointFrameId_, string("/robot"));
-  nodeHandle_.param("camera_params_yaml", cameraParamsFile, string("/home/hesuqin/zju_elevation_map_ws/src/GEM/elevation_mapping/yq_intrinsic.yaml")); // the string gives the default path
+  nodeHandle_.param("camera_params_yaml", cameraParamsFile, string("/home/runner/elevation_mapping_ws/src/realsense_elevation_mapping/GEM/elevation_mapping/yq_intrinsic.yaml")); // the string gives the default path
   nodeHandle_.param("robot_local_map_size", localMapSize_, 20.0);
   nodeHandle_.param("travers_threshold", traversThre, 0.0);
   nodeHandle_.param("octomap_resolution", octoResolution_, 0.04);
@@ -304,6 +304,7 @@ void ElevationMapping::processmapcells()
  */
 void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPointCloud, const sensor_msgs::Image::ConstPtr& image)
 {
+  ROS_INFO("Entering Callback...");
   ros::Time begin_time = ros::Time::now ();
 
   // conver image msg to cv::Mat
@@ -324,19 +325,28 @@ void ElevationMapping::Callback(const sensor_msgs::PointCloud2ConstPtr& rawPoint
   Eigen::MatrixXd P_lidar2img(3, 4);
   Eigen::MatrixXd Tcamera(3, 4);
   Eigen::MatrixXd TLidar(4, 4);
-  cv::Mat TCAM, TV;
+  // cv::Mat TCAM, TV;
 
   // Read camera instrinsic and camera-lidar extrinsics parameters
-  cv::FileStorage fsSettings(cameraParamsFile, cv::FileStorage::READ);
-  if(!fsSettings.isOpened())
-  {
-    cerr << "ERROR: Wrong path to settings" << endl;
-  }
+  // ROS_INFO("cameraParamsFile = %s", cameraParamsFile);
+  // cv::FileStorage fsSettings(cameraParamsFile, cv::FileStorage::READ);
+  // ROS_INFO("check2");
+  // if(!fsSettings.isOpened())
+  // {
+  //   cerr << "ERROR: Wrong path to settings" << endl;
+  // }
 
-  fsSettings["T.camera"] >> TCAM;
-  fsSettings["T.lidar"] >> TV;
-  Tcamera = toMatrix34(TCAM);
-  TLidar = toMatrix44(TV);
+  // fsSettings["T.camera"] >> TCAM;
+  // fsSettings["T.lidar"] >> TV;
+  // Tcamera = toMatrix34(TCAM);
+  // TLidar = toMatrix44(TV);
+  Tcamera << 498.6599, 0.000000, 369.2098, 0.000000,
+             0.000000, 498.3537, 277.1230, 0.000000,
+             0, 0, 1.0, 0.004915;
+  TLidar << 1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1;
 
   // calculate transform camera to lidar
   P_lidar2img = Tcamera * TLidar;
